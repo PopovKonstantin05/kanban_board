@@ -1,0 +1,72 @@
+.card {
+    height: auto;
+    overflow-x: hidden;
+    max-height: 77vh;
+    width: 21vw;
+    background-color: #EBECF0;
+    padding: 1.6vh 0.85vw 1.6vh 0.85vw;
+    border-radius: 10px;
+}
+
+.card__title {
+    font-family: 'Roboto';
+    font-size: 2.57vh;
+    margin-bottom: 2.1vh;
+}
+
+.card__task {
+    width: 19.5vw;
+    overflow-wrap: break-word;
+    font-family: 'Roboto';
+    font-size: 2.5vh;
+    background-color:#FFFFFF;
+    border-radius: 5px;
+    padding: 1vh 0.7vw 1vh 0.8vw;
+    margin-bottom: 2.1vh;
+}
+
+.button__add {
+    font-family: 'Roboto';
+    font-size: 2.57vh;
+    color: #5E6C84;
+    border: 0;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.button__submit {
+    width: 8vw;
+    height: 3.5vh;
+    display: none;
+    font-family: 'Roboto';
+    font-size: 2.57vh;
+    color: #FFFFFF;
+    border: 0;
+    border-radius: 5px;
+    background-color: #0079BF;
+    cursor: pointer;
+}
+
+.card__input {
+    display: none;
+    width: 19.5vw;
+    height: 2.7vh;
+    overflow-wrap: break-word;
+    font-family: 'Roboto';
+    font-size: 2.3vh;
+    background-color:#FFFFFF;
+    border-radius: 5px;
+    padding: 1vh 0.7vw 1vh 0.8vw;
+    margin-bottom: 0.8vw;
+}
+
+.card__select {
+    display: none;
+    width: 20vw;
+    height: 3.5vh;
+    background-color:#ffffff;
+    font-family: 'Roboto';
+    font-size: 2.3vh;
+    padding: 0vh 0.5vw 0.2vh 0.5vw;
+    margin-bottom: 0.8vw;
+}

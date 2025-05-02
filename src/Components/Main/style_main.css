@@ -1,0 +1,12 @@
+.main {
+    display: flex;
+    align-items: flex-start;
+    width: 100vw;
+    height: 84.29vh;
+    background-color: #0079BF;
+}
+
+.main__backlog, .main__ready, .main__inprogress, .main__finished {
+    margin-top: 2.86vh;
+    margin-left: 1.9vw;
+}

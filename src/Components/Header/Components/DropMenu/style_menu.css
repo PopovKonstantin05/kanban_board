@@ -1,0 +1,38 @@
+.dropmenu {
+    position: absolute;
+    width: 14vw;
+    height: 12vh;
+    background-color: #FFFFFF;
+    border-radius: 5px;
+    left: 84%;
+    top: 10%;
+}
+
+.dropmenu__ul {
+    padding: 0;
+    padding-left: 1.2vw;
+    margin-top: 1.5vh;
+}
+
+.dropmenu__li {
+    width: 6vw;
+    list-style-type: none;
+    font-family: 'Roboto';
+    font-size: 2.8vh;
+    margin-bottom: 1.7vh;
+    cursor: pointer;
+}
+
+.dropmenu__li:hover{
+    text-decoration: underline;
+}
+
+.headermenu__symbol {
+    position: absolute;
+    width: 1.701%;
+    height: 3%;
+    background-color: #FFFFFF;
+    transform: rotate(45deg);
+    top: 9%;
+    right: 4%;
+}
