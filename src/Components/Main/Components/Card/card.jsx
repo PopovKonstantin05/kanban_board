@@ -7,15 +7,15 @@ export function Card({ title }) {
     const refInput = useRef(null);
     const refSelect = useRef(null);
 
+    const [bool, setBool] = useState(true);
     //Переключатель состояния для кнопки
     const [open, setState] = useState(false);
-    //Отображение задач в Backlog
-    const [backlogTasks, setBacklogTasks] = useState([]);
-    //Отображение задач в селекте Ready
-    const [readySelectedTasks, setReadySelected] = useState([]);
-    //Отображение задач в Ready
-    const [readyTasks, setReadyTasks] = useState([]);
-
+    //Задачи в Backlog
+    const [backlogTasks, setBacklogTasks] = useState();
+    //Задачи в Ready
+    const [readyTasks, setReadyTasks] = useState();
+    //Селектор в Ready
+    const [readySelectedTasks, setReadySelectedTasks] = useState();
 
     //Отображение данных только при первом рендере
     useEffect(() => {
@@ -36,11 +36,12 @@ export function Card({ title }) {
 
         setBacklogTasks(backlogUpdatedTasks.sort((a, b) => a.props.id - b.props.id))
         setReadyTasks(readyUpdatedTasks.sort((a, b) => a.props.id - b.props.id))
-        setReadySelected(readySelected.sort((a, b) => a.props.id - b.props.id))
-    }, [])
+        setReadySelectedTasks(readySelected.sort((a, b) => a.props.id - b.props.id))
+    }, [bool])
 
     //Кнопка +Add Card
     const buttonAddClick = () => {
+        setBool(!bool)
         setState(!open);
         open === false ? ((refAdd.current.style.display = 'none') && (refSubmit.current.style.display = 'block')) : ((refAdd.current.style.display = 'block') && (refSubmit.current.style.display = 'none'))
         title === 'Backlog' ? (refInput.current.style.display = 'block') : (refInput.current.style.display = 'none')
@@ -69,7 +70,7 @@ export function Card({ title }) {
             }
             
             setBacklogTasks(newTasks.sort((a, b) => a.props.id - b.props.id))
-            setReadySelected(newSelected.sort((a, b) => a.props.id - b.props.id))
+            setReadySelectedTasks(newSelected.sort((a, b) => a.props.id - b.props.id))
             refInput.current.value = '';
         }
 
@@ -104,14 +105,14 @@ export function Card({ title }) {
 
             setReadyTasks(newTasks.sort((a, b) => a.props.id - b.props.id))
             setBacklogTasks(newTasks2.sort((a, b) => a.props.id - b.props.id))
-            setReadySelected(newReadySelected.sort((a, b) => a.props.id - b.props.id))
+            setReadySelectedTasks(newReadySelected.sort((a, b) => a.props.id - b.props.id))
         }
     }
 
     return (
         <div className='card'>
             <div className='card__title'>{ title }</div>
-            { title === 'Backlog' ? (backlogTasks) : ( title === 'Ready' ? (readyTasks) : (""))}
+            { title === 'Backlog' ? (backlogTasks) : (title === 'Ready' ? (readyTasks) : (null))}
             <select ref={refSelect} className='card__select'>
                 { readySelectedTasks }
             </select>

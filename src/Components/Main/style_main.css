@@ -6,7 +6,7 @@
     background-color: #0079BF;
 }
 
-.main__backlog, .main__ready, .main__inprogress, .main__finished {
+.main__card {
     margin-top: 2.86vh;
     margin-left: 1.9vw;
 }
