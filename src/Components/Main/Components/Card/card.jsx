@@ -1,124 +1,70 @@
 import './style_card.css';
-import { useState, useRef, useEffect } from 'react';
+import { TaskDescription } from './task_description.jsx';
+import { useRef, useContext } from 'react';
+import { Routes, Route, Link } from 'react-router-dom';
+import { TaskContext } from '../../../../contexts/TaskContext.jsx';
 
 export function Card({ title }) {
-    const refAdd = useRef(null);
-    const refSubmit = useRef(null);
-    const refInput = useRef(null);
-    const refSelect = useRef(null);
 
-    const [bool, setBool] = useState(true);
-    //Переключатель состояния для кнопки
-    const [open, setState] = useState(false);
-    //Задачи в Backlog
-    const [backlogTasks, setBacklogTasks] = useState();
-    //Задачи в Ready
-    const [readyTasks, setReadyTasks] = useState();
-    //Селектор в Ready
-    const [readySelectedTasks, setReadySelectedTasks] = useState();
+    const { tasks, addTask, changeTask } = useContext(TaskContext);
 
-    //Отображение данных только при первом рендере
-    useEffect(() => {
-        let backlogUpdatedTasks = [];
-        let readyUpdatedTasks = [];
-        let readySelected = [];
+    const refAdd = useRef(); //Добавление новой задачи
+    const refInput = useRef(); //Поле ввода новой задачи
+    const refSubmit = useRef(); //Внесение задачи в карточку
+    const refSelect = useRef(); //Выпадающий список
 
-        for(let i=0; i<localStorage.length; i++){
-            const parsedValue = JSON.parse(localStorage.getItem(localStorage.key(i)));
-            if(parsedValue.title === 'backlog'){
-                backlogUpdatedTasks.push(<div className='card__task' id={parsedValue.id}>{parsedValue.name}</div>);
-                readySelected.push(<option id={parsedValue.id}>{parsedValue.name}</option>);
-            }
-            if(parsedValue.title === 'ready'){
-                readyUpdatedTasks.push(<div className='card__task' id={parsedValue.id}>{parsedValue.name}</div>);
-            }
+    const optionReady = tasks.filter(task => task.title === "Backlog").map(task => <option id={ task.id }>{ task.name }</option>);
+    const optionInProgress = tasks.filter(task => task.title === "Ready").map(task => <option id={ task.id }>{ task.name }</option>);
+    const optionFinished = tasks.filter(task => task.title === "In Progress").map(task => <option id={ task.id }>{ task.name }</option>);
+
+    const filteredTasks = tasks
+        .filter(task => task.title === title)
+        .sort((a, b) => a.id - b.id)
+        .map(task => (
+            <Link to={`/task/${task.id}`} state={{ taskDate: task, from: title }} className='card__link'>
+                <div className='card__task'>{ task.name }</div>
+            </Link>
+    ));
+
+    const onButtonAddClick = () => {
+        refAdd.current.style.display = 'none'
+        refSubmit.current.style.display = 'block'
+        if(title === 'Backlog'){
+            refInput.current.style.display = 'block'
+        } else {
+            refSelect.current.style.display = 'block'
         }
-
-        setBacklogTasks(backlogUpdatedTasks.sort((a, b) => a.props.id - b.props.id))
-        setReadyTasks(readyUpdatedTasks.sort((a, b) => a.props.id - b.props.id))
-        setReadySelectedTasks(readySelected.sort((a, b) => a.props.id - b.props.id))
-    }, [bool])
-
-    //Кнопка +Add Card
-    const buttonAddClick = () => {
-        setBool(!bool)
-        setState(!open);
-        open === false ? ((refAdd.current.style.display = 'none') && (refSubmit.current.style.display = 'block')) : ((refAdd.current.style.display = 'block') && (refSubmit.current.style.display = 'none'))
-        title === 'Backlog' ? (refInput.current.style.display = 'block') : (refInput.current.style.display = 'none')
-        title === 'Ready' ? (refSelect.current.style.display = 'block') : (refSelect.current.style.display = 'none')
     }
-
-    //Кнопка Submit
-    const buttonSubmitClick = () => {
-        setState(!open);
-        if(refInput.current.value !== '' && title === 'Backlog'){
-            refAdd.current.style.display = 'block';
+    const onButtonSubmitClick = () => {
+        if(title === 'Backlog' && refInput.current.value !== ""){
+            addTask(title, refInput.current.value);
             refInput.current.style.display = 'none';
+            refInput.current.value = ""
+            refAdd.current.style.display = 'block';
             refSubmit.current.style.display = 'none';
-
-            let newTasks = [];
-            let newSelected = [];
-
-            localStorage.setItem(localStorage.length+1, JSON.stringify({title: 'backlog', id: localStorage.length+1, name: refInput.current.value, description: 'This task has no description'}));
-            
-            for(let i=0; i<localStorage.length; i++){
-                const parsedValue = JSON.parse(localStorage.getItem(localStorage.key(i)));
-                if(parsedValue.title === 'backlog'){
-                    newTasks.push(<div className='card__task' id={parsedValue.id}>{parsedValue.name}</div>);
-                    newSelected.push(<option id={parsedValue.id}>{parsedValue.name}</option>);
-                }
-            }
-            
-            setBacklogTasks(newTasks.sort((a, b) => a.props.id - b.props.id))
-            setReadySelectedTasks(newSelected.sort((a, b) => a.props.id - b.props.id))
-            refInput.current.value = '';
-        }
-
-        if(title === 'Ready'){
+        } else if(refSelect.current.textContent !== ""){
+            changeTask(tasks.forEach((elem) => elem.id.toString() === refSelect.current.options[refSelect.current.selectedIndex].id ? ((elem.title = title) && (elem.id = Date.now())) : (null)));
             refSelect.current.style.display = 'none';
             refSubmit.current.style.display = 'none';
             refAdd.current.style.display = 'block';
-
-            let newTasks = [];
-            let newTasks2 = [];
-            let newReadySelected = [];
-
-            //const optionsAfterSelected = Array.from(refSelect.current.options).slice(refSelect.current.selectedIndex + 1);
-            for(let i=0; i<localStorage.length; i++){
-                const parsedValue = JSON.parse(localStorage.getItem(localStorage.key(i)));
-                if(refSelect.current.selectedIndex + 1 === parsedValue.id){
-                    localStorage.setItem(parsedValue.id, JSON.stringify({title: 'ready', id: parsedValue.id, name: refSelect.current.value, description: 'This task has no description'}));
-                }
-            }
-
-
-            for(let i=0; i<localStorage.length; i++){
-                const parsedValue = JSON.parse(localStorage.getItem(localStorage.key(i)));
-                if(parsedValue.title === 'ready'){
-                    newTasks.push(<div className='card__task' id={parsedValue.id}>{parsedValue.name}</div>);
-                }
-                if(parsedValue.title === 'backlog'){
-                    newTasks2.push(<div className='card__task' id={parsedValue.id}>{parsedValue.name}</div>);
-                    newReadySelected.push(<option id={parsedValue.id}>{parsedValue.name}</option>);
-                }
-            }
-
-            setReadyTasks(newTasks.sort((a, b) => a.props.id - b.props.id))
-            setBacklogTasks(newTasks2.sort((a, b) => a.props.id - b.props.id))
-            setReadySelectedTasks(newReadySelected.sort((a, b) => a.props.id - b.props.id))
         }
     }
 
-    return (
-        <div className='card'>
-            <div className='card__title'>{ title }</div>
-            { title === 'Backlog' ? (backlogTasks) : (title === 'Ready' ? (readyTasks) : (null))}
-            <select ref={refSelect} className='card__select'>
-                { readySelectedTasks }
-            </select>
-            <textarea ref={refInput} className='card__input' type='text' placeholder='Введите название задачи'></textarea>
-            <button ref={refAdd} className='button__add' onClick={ buttonAddClick }>+ Add card</button>
-            <button ref={refSubmit} className='button__submit' onClick={ buttonSubmitClick }>Submit</button>
+    return(
+        <div>
+            <div className='card'>
+                <div className='card__title'>{ title }</div>
+                <div className='card__task-length'>Количество задач - { filteredTasks.length }</div>
+                { filteredTasks }
+                <textarea ref={refInput} className='card__input' type='text' placeholder='Введите новую задачу'></textarea>
+                <select ref={refSelect} className='card__select'>{ title === "Ready" ? (optionReady) : (title === "In Progress" ? (optionInProgress) : (title === "Finished" ? (optionFinished) : (null))) }</select>
+                <button ref={refSubmit} className='button__submit' onClick={onButtonSubmitClick}>Назначить задачу</button>
+                <button ref={refAdd} className='button__add' onClick={onButtonAddClick}>Добавить задачу</button>
+            </div>
+            <Routes>
+                <Route path="/" element={null} />
+                <Route path="/task/:taskId/*" element={<TaskDescription />} />
+            </Routes>
         </div>
     );
 }
